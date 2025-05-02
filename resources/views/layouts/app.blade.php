@@ -11,31 +11,55 @@
 
     <style>
         body {
-            background: #f5f5f5;
-        }
-
-        .container {
-            max-width: 1000px;
-            margin-top: 50px;
-        }
-
-        .card {
-            border-radius: 10px;
-        }
-
-        .table thead {
-            background: #343a40;
+            background: #000;
             color: #fff;
         }
 
-        .table-success {
-            background-color: #d4edda !important;
+        .card {
+            background: #111;
+            border-radius: 10px;
+            border: 1px solid #444;
+        }
+
+        .table thead {
+            background: #222;
+            color: #fff;
+        }
+
+        .table-dark tbody tr {
+            background: linear-gradient(to right, #111, #222);
+            color: #fff;
+        }
+
+        .table-dark tbody tr:hover {
+            background-color: #333;
+        }
+
+        .highlight-row {
+            border: 2px solid #fff;
+        }
+
+        .form-control,
+        .form-select {
+            background: #222;
+            color: #fff;
+            border: 1px solid #555;
+        }
+
+        .form-control::placeholder {
+            color: #aaa;
+        }
+
+        .btn-custom {
+            background-color: #ccc;
+            color: #000;
         }
     </style>
 </head>
+@stack('scripts')
 
 <body>
-    <div class="container">
+    <div class="container py-5">
         @yield('content')
     </div>
 

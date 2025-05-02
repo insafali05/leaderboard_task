@@ -7,21 +7,21 @@ use App\Models\User;
 use App\Models\UserPoint;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\DB;
 
 class LeaderboardController extends Controller
 {
     public function index(Request $request)
     {
         $filter = $request->get('filter');
-        $userId = $request->get('user_id');
+        $userId = $request->get('search');
 
         $query = Activity::query();
 
         if ($filter === 'day') {
             $query->whereDate('performed_at', Carbon::today());
         } elseif ($filter === 'month') {
-            $query->whereMonth('performed_at', Carbon::now()->month);
+            $query->whereMonth('performed_at', Carbon::now()->month)
+                ->whereYear('performed_at', Carbon::now()->year);
         } elseif ($filter === 'year') {
             $query->whereYear('performed_at', Carbon::now()->year);
         }
@@ -59,13 +59,22 @@ class LeaderboardController extends Controller
         $query = UserPoint::with('user')->orderBy('rank');
 
         if ($userId) {
-            $query->orderByRaw("FIELD(user_id, ?) DESC", [$userId]);
+            $query->whereHas('user', function ($q) use ($userId) {
+                $q->where('id', 'like', "%{$userId}%");
+            });
         }
 
         $leaderboard = $query->get();
 
+        if ($request->ajax()) {
+            return response()->json([
+                'html' => view('partials.leaderboard_table', compact('leaderboard', 'userId'))->render()
+            ]);
+        }
+
         return view('leaderboard', compact('leaderboard'));
     }
+
 
     public function recalculate()
     {
